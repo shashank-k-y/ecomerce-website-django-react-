@@ -17,6 +17,7 @@ gateway = braintree.BraintreeGateway(
     )
 )
 
+
 def validate_user_session(id, token):
     UserModel = get_user_model()
 
@@ -32,14 +33,15 @@ def validate_user_session(id, token):
 @csrf_exempt
 def generate_token(request, id, token):
     if not validate_user_session(id, token):
-        return JsonResponse({'error':'Invalid session, please login again'})
-    return JsonResponse({'clientToken':gateway.client_token.generate(),'success':True})
+        return JsonResponse({'error': 'Invalid session, please login again'})
+    return JsonResponse({'clientToken': gateway.client_token.generate(), 'success': True})
+
 
 @csrf_exempt
 def process_payment(request, id, token):
     if not validate_user_session(id, token):
-        return JsonResponse({'error':'Invalid session, please login again'})
-    
+        return JsonResponse({'error': 'Invalid session, please login again'})
+
     nonce_from_the_client = request.POST["paymentMethodNonce"]
     amount_from_the_client = request.POST["amount"]
 
@@ -53,9 +55,6 @@ def process_payment(request, id, token):
 
     if result.is_success:
         return JsonResponse({
-            "success": result.is_success,'transaction': {'id': result.transaction.id, 'amount': result.transaction.amount}})
+            "success": result.is_success, 'transaction': {'id': result.transaction.id, 'amount': result.transaction.amount}})
     else:
-        return JsonResponse({'error':True,'success':False})
-        
-
-    
+        return JsonResponse({'error': True, 'success': False})
